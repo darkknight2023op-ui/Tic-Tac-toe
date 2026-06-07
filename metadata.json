@@ -1,0 +1,6 @@
+{
+  "name": "Tic Tac Toe",
+  "description": "A premium, professional Tic Tac Toe game designed in shades of red, black, gold, and silver. Featuring custom smooth animations, smart local play, multiple difficulty settings, sound synthesizers, and performance statistics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,87 @@
+{
+  "entities": {
+    "Match": {
+      "title": "Match",
+      "description": "Represents an online real-time multiplayer match",
+      "type": "object",
+      "properties": {
+        "roomId": {
+          "type": "string",
+          "description": "Unique room code identifying the lobby"
+        },
+        "challengerId": {
+          "type": "string",
+          "description": "UID of the player hosting the room (X)"
+        },
+        "challengerName": {
+          "type": "string",
+          "description": "Display name of the hosting player"
+        },
+        "opponentId": {
+          "type": "string",
+          "description": "UID of the joined player (O), or empty string if empty"
+        },
+        "opponentName": {
+          "type": "string",
+          "description": "Display name of the joined player, or empty string if empty"
+        },
+        "boardState": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The 3x3 board representation, containing strings 'X', 'O' or null/empty"
+        },
+        "activePlayer": {
+          "type": "string",
+          "description": "The current active turn: 'X' or 'O'"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["waiting", "playing", "ended"],
+          "description": "The game state"
+        },
+        "winnerSymbol": {
+          "type": "string",
+          "enum": ["X", "O", "draw", ""],
+          "description": "The result of the match"
+        },
+        "skin": {
+          "type": "string",
+          "enum": ["crimson", "gold", "silver", "obsidian"],
+          "description": "The cosmetic skin applied to the board"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the match was created"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the last move or state update occurred"
+        }
+      },
+      "required": [
+        "roomId",
+        "challengerId",
+        "challengerName",
+        "opponentId",
+        "opponentName",
+        "boardState",
+        "activePlayer",
+        "status",
+        "winnerSymbol",
+        "skin",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/matches/{matchId}": {
+      "schema": "Match",
+      "description": "Houses active game matches indexed by their room codes/ID"
+    }
+  }
+}

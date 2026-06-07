@@ -1,0 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Cinzel", serif;
+  --font-space: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  /* Premium Palette */
+  --color-gold-50: #fdfaf2;
+  --color-gold-100: #f9f0d4;
+  --color-gold-200: #f2e0a2;
+  --color-gold-300: #e8ca6b;
+  --color-gold-400: #dbb03c;
+  --color-gold-500: #d4af37; /* Metallic Gold */
+  --color-gold-600: #b5922a;
+  --color-gold-700: #8c701f;
+  --color-gold-800: #614e15;
+  --color-gold-900: #3b2f0a;
+  
+  --color-silver-50: #f8f9fa;
+  --color-silver-100: #e9ecef;
+  --color-silver-200: #dee2e6;
+  --color-silver-300: #ced4da;
+  --color-silver-400: #adb5bd;
+  --color-silver-500: #8a95ad;
+  --color-silver-600: #717a8a;
+  --color-silver-700: #545b68;
+  --color-silver-800: #343740;
+  --color-silver-900: #1b1c21;
+
+  --color-crimson-50: #fff5f5;
+  --color-crimson-100: #ffe3e3;
+  --color-crimson-200: #ffb3b3;
+  --color-crimson-300: #ff8080;
+  --color-crimson-400: #ff4d4d;
+  --color-crimson-500: #d90429; /* Royal Crimson */
+  --color-crimson-600: #bd1f36;
+  --color-crimson-700: #9e0c1f;
+  --color-crimson-800: #800010;
+  --color-crimson-900: #4a0005;
+}
+
+body {
+  background-color: #050505;
+  color: #dee2e6;
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+/* Custom shimmering golden scrollbar and sleek interactions */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+::-webkit-scrollbar-thumb {
+  background: #151821;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #d4af37;
+}
+

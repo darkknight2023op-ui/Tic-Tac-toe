@@ -1,0 +1,81 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    match /test-connection-placeholder/{documentId} {
+      allow read: if true;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    function isSignedIn() { return request.auth != null; }
+
+    function isValidMatch(data) {
+      return data.roomId is string && data.roomId.size() <= 10 &&
+             data.challengerId is string && data.challengerId.size() <= 128 &&
+             data.challengerName is string && data.challengerName.size() <= 50 &&
+             data.opponentId is string && data.opponentId.size() <= 128 &&
+             data.opponentName is string && data.opponentName.size() <= 50 &&
+             data.boardState is list && data.boardState.size() == 9 &&
+             data.activePlayer is string && (data.activePlayer == 'X' || data.activePlayer == 'O') &&
+             data.status is string && (data.status == 'waiting' || data.status == 'playing' || data.status == 'ended') &&
+             data.winnerSymbol is string && (data.winnerSymbol == 'X' || data.winnerSymbol == 'O' || data.winnerSymbol == 'draw' || data.winnerSymbol == '') &&
+             data.skin is string && (data.skin == 'crimson' || data.skin == 'gold' || data.skin == 'silver' || data.skin == 'obsidian') &&
+             data.createdAt is timestamp &&
+             data.updatedAt is timestamp;
+    }
+
+    match /matches/{matchId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() &&
+                    isValidId(matchId) &&
+                    isValidMatch(incoming()) &&
+                    incoming().challengerId == request.auth.uid &&
+                    incoming().opponentId == '' &&
+                    incoming().status == 'waiting' &&
+                    incoming().createdAt == request.time &&
+                    incoming().updatedAt == request.time &&
+                    incoming().keys().hasAll(['roomId', 'challengerId', 'challengerName', 'opponentId', 'opponentName', 'boardState', 'activePlayer', 'status', 'winnerSymbol', 'skin', 'createdAt', 'updatedAt']) &&
+                    incoming().keys().size() == 12;
+
+      allow update: if isSignedIn() &&
+                    isValidId(matchId) &&
+                    isValidMatch(incoming()) &&
+                    incoming().updatedAt == request.time &&
+                    incoming().createdAt == existing().createdAt &&
+                    incoming().challengerId == existing().challengerId &&
+                    (
+                      // Action 1: Opponent Joins
+                      (
+                        existing().status == 'waiting' &&
+                        incoming().status == 'playing' &&
+                        incoming().opponentId == request.auth.uid &&
+                        incoming().diff(existing()).affectedKeys().hasOnly(['opponentId', 'opponentName', 'status', 'updatedAt'])
+                      ) ||
+                      // Action 2: Player Makes Move (Turn-Validation & True Identity Protection)
+                      (
+                        existing().status == 'playing' &&
+                        (
+                          (existing().activePlayer == 'X' && request.auth.uid == existing().challengerId) ||
+                          (existing().activePlayer == 'O' && request.auth.uid == existing().opponentId)
+                        ) &&
+                        incoming().diff(existing()).affectedKeys().hasOnly(['boardState', 'activePlayer', 'status', 'winnerSymbol', 'updatedAt'])
+                      ) ||
+                      // Action 3: Restart / Update skin (Only Challenger/Host can do this)
+                      (
+                        request.auth.uid == existing().challengerId &&
+                        incoming().diff(existing()).affectedKeys().hasOnly(['boardState', 'activePlayer', 'status', 'winnerSymbol', 'skin', 'updatedAt'])
+                      )
+                    );
+
+      allow delete: if false;
+    }
+  }
+}
